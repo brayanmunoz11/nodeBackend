@@ -17,7 +17,7 @@ require('./lib/passport');
 
 // Settings
 app.set('port', process.env.PORT || 4000);
-app.set('views', path.join(__dirname, 'views'));
+/*app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
     defaultLayout: 'main',
     layoutsDir: path.join(app.get('views'), 'layouts'),
@@ -25,7 +25,7 @@ app.engine('.hbs', exphbs({
     extname: '.hbs',
     helpers: require('./lib/handlebars')
   }))
-  app.set('view engine', '.hbs');
+  app.set('view engine', '.hbs');*/
 
 // Middlewares
 app.use(flash());
@@ -36,12 +36,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-app.use(session({
+/*app.use(session({
   secret: 'faztmysqlnodemysql',
   resave: false,
   saveUninitialized: false,
   store: new MySQLStore(database)
-}));
+}));*/
 
 
 
@@ -56,7 +56,7 @@ app.use((req, res, next) => {
 //Routes
 app.use(require('./routes/index'));
 app.use(require('./routes/authentication'));
-app.use('/links', require('./routes/links'));
+//app.use('/links', require('./routes/links'));
 
 //Public
 
