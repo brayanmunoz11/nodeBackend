@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    res.render('bienenido a mi API');
+    res.send('hello world');
 });
 
 module.exports = router;

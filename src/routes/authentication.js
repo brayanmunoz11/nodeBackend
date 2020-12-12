@@ -6,7 +6,7 @@ const router = express.Router();
 // SIGNUP
 router.get('/signup', (req, res) => {
     res.render('auth/signup');
-    res.send('API SIGNUP');
+    
   });
 
 

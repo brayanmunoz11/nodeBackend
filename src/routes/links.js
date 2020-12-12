@@ -15,27 +15,27 @@ router.post('/add', async (req, res) => {
         description,
         
     };
-    await pool.query('INSERT INTO links set ?', [newLink]);
+    await pool.query('INSERT INTO heroku_ac61479f38e9e23.links set ?', [newLink]);
     req.flash('success', 'Link Saved Successfully');
     res.redirect('/links');
 });
 
 router.get('/',  async (req, res) => {
-    const links = await pool.query('SELECT * FROM links');
+    const links = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.links');
     console.log(links)
     res.render('links/list', { links });
 });
 
 router.get('/delete/:id', async (req, res) => {
     const { id } = req.params;
-    await pool.query('DELETE FROM links WHERE ID = ?', [id]);
+    await pool.query('DELETE FROM heroku_ac61479f38e9e23.links WHERE ID = ?', [id]);
     req.flash('success', 'Link Removed Successfully');
     res.redirect('/links');
 });
 
 router.get('/edit/:id', async (req, res) => {
     const { id } = req.params;
-    const links = await pool.query('SELECT * FROM links WHERE id = ?', [id]);
+    const links = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.links WHERE id = ?', [id]);
     res.render('links/edit', {link: links[0]});
 });
 
@@ -48,7 +48,7 @@ router.post('/edit/:id', async (req, res) => {
         url
     };
     console.log(newLink);
-    await pool.query('UPDATE links set ? WHERE id = ?', [newLink, id]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.links set ? WHERE id = ?', [newLink, id]);
     req.flash('success', 'Link Updated Successfully');
     res.redirect('/links');
 });
