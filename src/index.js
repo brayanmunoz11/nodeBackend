@@ -36,12 +36,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-/*app.use(session({
+app.use(session({
   secret: 'faztmysqlnodemysql',
   resave: false,
   saveUninitialized: false,
   store: new MySQLStore(database)
-}));*/
+}));
 
 
 
@@ -54,7 +54,7 @@ app.use((req, res, next) => {
   });
 
 //Routes
-app.use(require('./routes/index'));
+//app.use(require('./routes/index'));
 app.use(require('./routes/authentication'));
 //app.use('/links', require('./routes/links'));
 
