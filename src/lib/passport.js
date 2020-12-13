@@ -2,14 +2,13 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const pool = require('../database');
-const helpers = require('../lib/helpers');
+const helpers = require('./helpers');
 
 passport.use('local.signin', new LocalStrategy({
   usernameField: 'username',
   passwordField: 'password',
   passReqToCallback: true
 }, async (req, username, password, done) => {
-  
   const rows = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
   if (rows.length > 0) {
     const user = rows[0];
@@ -24,38 +23,32 @@ passport.use('local.signin', new LocalStrategy({
   }
 }));
 
-
 passport.use('local.signup', new LocalStrategy({
   usernameField: 'username',
   passwordField: 'password',
   passReqToCallback: true
 }, async (req, username, password, done) => {
 
-  const { nombre } = req.body;
-  const { apellido } = req.body;
-  const { email } = req.body;
-  const newUser = {
-      username,
-      password,
-      nombre,
-      apellido,
-      email
+  const { fullname } = req.body;
+  let newUser = {
+    fullname,
+    username,
+    password
   };
-  newUser.password =  await helpers.encryptPassword(password);
-
-  const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.users SET ? ', [newUser]);
+  newUser.password = await helpers.encryptPassword(password);
+  // Saving in the Database
+  const result = await pool.query('INSERT INTO users SET ? ', newUser);
   newUser.id = result.insertId;
   return done(null, newUser);
 }));
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+  done(null, user.id);
+});
 
 passport.deserializeUser(async (id, done) => {
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.users WHERE id = ?', [id]);
-    done(null, rows[0]);
+  const rows = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+  done(null, rows[0]);
 });
-  
 
 

@@ -31,7 +31,7 @@ router.get('/signup', (req, res) => {
   
   
   router.get('/profile',(req, res) => {
-    res.send(' this is your profile');
+    res.render('profile');
   });
 
 

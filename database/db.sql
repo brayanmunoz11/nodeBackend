@@ -1,4 +1,4 @@
-CREATE DATABASE db_links;
+/*CREATE DATABASE db_links;
 
 USE db_links;
 
@@ -41,4 +41,4 @@ ALTER TABLE links
 ALTER TABLE links
   MODIFY id INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 2;
 
-DESCRIBE links;
+DESCRIBE links;*/
