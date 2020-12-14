@@ -31,7 +31,7 @@ router.get('/signup', (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     res.setHeader('Access-Control-Allow-Origin', '*');
     console.send('signin');
-    console.log(req.bady);
+    console.log(req.body);
 		
     /*
     passport.authenticate('local.signin', {
