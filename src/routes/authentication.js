@@ -37,7 +37,7 @@ router.get('/signup', (req, res) => {
     var message = '';
     var users = {};
     const user1 = req.body; 
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE username = ?', [user1.nombre]);
+    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [user1.nombre]);
     if (rows.length > 0) {
       const user = rows[0];
       const validPassword = await helpers.matchPassword(user1.password, user.password)
