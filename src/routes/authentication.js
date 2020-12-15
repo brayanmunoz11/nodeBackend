@@ -25,17 +25,16 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
   console.log(req.body)
   const user = req.body;
   let newUser = { 
-    usuario : user.usuario,
-    password : user.password,
     nombre : user.nombre, 
     apellido : user.apellido,
-    email : user.email
-  
-
+    usuario : user.usuario,
+    email : user.email,
+    password : user.password
+    
   }
   newUser.password = await helpers.encryptPassword(user.password);
   // Saving in the Database
-  const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.users SET ? ', newUser);
+  const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
   //const result = await pool.query(``);
 
   newUser.id = result.insertId;
