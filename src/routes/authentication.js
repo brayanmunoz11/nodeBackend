@@ -21,7 +21,9 @@ router.get('/signup', (req, res) => {
 router.post('/signup', upload.fields([]), async (req, res, next) => {
   res.setHeader('Content-Type', 'application/json')
   res.setHeader('Access-Control-Allow-Origin', '*');
-  //const { fullname } = req.body;
+  var message = '';
+  var users = {};
+   
   console.log(req.body)
   const user = req.body;
   let newUser = { 
@@ -34,11 +36,14 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
   }
   newUser.password = await helpers.encryptPassword(user.password);
   // Saving in the Database
-  const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
-  //const result = await pool.query(``);
-
-  newUser.id = result.insertId;
-  return done(null, newUser);
+  
+    const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
+    users = newUser;
+    message = 'User create';
+    res.status(200).json({
+      data: users,
+      message: message
+    }); 
 
 });
 
