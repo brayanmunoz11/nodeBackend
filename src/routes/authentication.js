@@ -23,14 +23,21 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   //const { fullname } = req.body;
   console.log(req.body)
-  let newUser = {
-    fullname,
-    username,
-    password
-  };
-  newUser.password = await helpers.encryptPassword(password);
+  const user = req.body;
+  let newUser = { 
+    usuario : user.usuario,
+    password : user.password,
+    nombre : user.nombre, 
+    apellido : user.apellido,
+    email : user.email
+  
+
+  }
+  newUser.password = await helpers.encryptPassword(user.password);
   // Saving in the Database
   const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.users SET ? ', newUser);
+  //const result = await pool.query(``);
+
   newUser.id = result.insertId;
   return done(null, newUser);
 
