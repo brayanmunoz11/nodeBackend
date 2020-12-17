@@ -10,11 +10,12 @@ class UserServices {
 
     const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [user.nombre]);
     if (rows.length > 0) {
-      const user = rows[0];
-      const validPassword = await helpers.matchPassword(user.password, user.password)
+      const userf = rows[0];
+      console.log([user.password, userf.password])
+      const validPassword = await helpers.matchPassword(user.password, userf.password)
       if (validPassword) {
         users = user;
-        message = 'usario logeado';
+        message = 'usuario logeado';
         console.log(user);
       } else {
         message = 'password incorrecto';
@@ -23,7 +24,7 @@ class UserServices {
       message = 'usuario no existe';
     }
 
-    return [users, message]
+    return [users, message];
   }
   async createUser(user) {
     let newUser = {
@@ -40,3 +41,5 @@ class UserServices {
     return newUser
   }
 }
+
+module.exports = UserServices;
