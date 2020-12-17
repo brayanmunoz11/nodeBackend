@@ -40,7 +40,7 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
     const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
     
    users = newUser;
-    message = 'user create';
+    message = 'user created';
     res.status(200).json({
       data: users,
       message: message
