@@ -7,7 +7,7 @@ class UserServices {
   async getUser(user) {
     var message = '';
     var users = {};
-    
+
     const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [user.nombre]);
     if (rows.length > 0) {
       const user = rows[0];
