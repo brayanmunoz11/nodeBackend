@@ -3,22 +3,36 @@ const router = express.Router();
 
 const pool = require('../database');
 
-router.post('/add', async (req, res) => {
-    const { title, iduser, description, tipo } = req.body;
+let multer = require('multer');
+let upload = multer();
 
-    console.log(req.body);
-    const newArchive = {
-        nombre: title,
-        cuerpo: description,
-        iduser: iduser
-    };
-    if (tipo == 'css'){
-        await pool.query('INSERT INTO heroku_ac61479f38e9e23.css set ?', [newArchive]);
-    }
-    else if (tipo == 'html'){
-        await pool.query('INSERT INTO heroku_ac61479f38e9e23.html set ?', [newArchive]);
-    } else{
-        await pool.query('INSERT INTO heroku_ac61479f38e9e23. set ?', [newArchive]);
+router.post('/add', upload.fields([]), async (req, res) => {
+    let valid = false;
+    try {
+        const { nombre, cuerpo, iduser, tipo } = req.body;
+        const newArchive = {
+            nombre,
+            cuerpo,
+            iduser
+        };
+        if (tipo == 'css'){
+            await pool.query('INSERT INTO heroku_ac61479f38e9e23.css set ?', [newArchive]);
+            valid=true;
+        }
+        else if (tipo == 'html'){
+            await pool.query('INSERT INTO heroku_ac61479f38e9e23.html set ?', [newArchive]);
+            valid=true;
+        }
+        else{
+            await pool.query('INSERT INTO heroku_ac61479f38e9e23. set ?', [newArchive]);
+            valid=true;
+        }
+        res.status(201).json({
+            data: valid,
+            message: 'file created'
+        });
+    }catch(err){
+        next(err);
     }
 });
 
