@@ -3,10 +3,6 @@ const router = express.Router();
 
 const pool = require('../database');
 
-router.get('/add', (req, res) => {
-    res.render('links/add');
-});
-
 router.post('/add', async (req, res) => {
     const { title, iduser, description, tipo } = req.body;
 
@@ -15,8 +11,6 @@ router.post('/add', async (req, res) => {
         nombre: title,
         cuerpo: description,
         iduser: iduser
-        
-        
     };
     if (tipo == 'css'){
         await pool.query('INSERT INTO heroku_ac61479f38e9e23.css set ?', [newArchive]);
@@ -49,7 +43,7 @@ router.get('/edit/:id', async (req, res) => {
 
 router.post('/edit/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, description, url} = req.body; 
+    const { title, description, url} = req.body;
     const newLink = {
         title,
         description,
