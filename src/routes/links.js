@@ -6,25 +6,28 @@ const pool = require('../database');
 let multer = require('multer');
 let upload = multer();
 
-router.post('/add', upload.fields([]), async (req, res) => {
-    let valid = false;
+router.post('/add', upload.fields([]), async (req, res, next) => {
+    // console.log(req.body)
     try {
+        let valid = false;
         const { nombre, cuerpo, iduser, tipo } = req.body;
         const newArchive = {
             nombre,
-            cuerpo,
-            iduser
+            cuerpo
         };
         if (tipo == 'css'){
+            newArchive.iduser = iduser
             await pool.query('INSERT INTO heroku_ac61479f38e9e23.css set ?', [newArchive]);
             valid=true;
         }
         else if (tipo == 'html'){
+            newArchive.iduser2 = iduser
             await pool.query('INSERT INTO heroku_ac61479f38e9e23.html set ?', [newArchive]);
             valid=true;
         }
-        else{
-            await pool.query('INSERT INTO heroku_ac61479f38e9e23. set ?', [newArchive]);
+        else if (tipo == 'js'){
+            newArchive.iduser1 = iduser
+            await pool.query('INSERT INTO heroku_ac61479f38e9e23.js set ?', [newArchive]);
             valid=true;
         }
         res.status(201).json({
