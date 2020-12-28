@@ -39,11 +39,29 @@ router.post('/add', upload.fields([]), async (req, res, next) => {
     }
 });
 
-router.get('/',  async (req, res) => {
-    const links = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css');
-    console.log(links)
-    res.render('links/list', { links });
+router.post('/list',  async (req, res, next) => {
+    const {tipo} = req.body;
+    console.log(req.body)
+    try {
+        let list
+        if (tipo == 'css'){
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css');
+        }
+        else if (tipo == 'html'){
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.html');
+        }
+        else if (tipo == 'js'){
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.js');
+        }
+        res.status(201).json({
+            data: list,
+            message: 'file listed'
+        });
+    }catch(err){
+        next(err);
+    }
 });
+
 
 router.get('/delete/:id', async (req, res) => {
     const { id } = req.params;
