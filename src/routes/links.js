@@ -40,18 +40,18 @@ router.post('/add', upload.fields([]), async (req, res, next) => {
 });
 
 router.post('/list',  async (req, res, next) => {
-    const {tipo, iduser} = req.body;
+    const {tipo, id} = req.body;
     console.log(req.body)
     try {
         let list
         if (tipo == 'css'){
-            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css WHERE iduser = ?', [iduser]);
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css WHERE iduser = ?', [id]);
         }
         else if (tipo == 'html'){
-            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.html WHERE iduser2 = ?', [iduser]);
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.html WHERE iduser2 = ?', [id]);
         }
         else if (tipo == 'js'){
-            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.js WHERE iduser1 = ?', [iduser]);
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.js WHERE iduser1 = ?', [id]);
         }
         res.status(201).json({
             data: list,
