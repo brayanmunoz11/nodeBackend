@@ -48,10 +48,10 @@ router.post('/list',  async (req, res, next) => {
             list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css WHERE iduser = ?', [iduser]);
         }
         else if (tipo == 'html'){
-            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.html WHERE iduser2 = ?', [iduser]););
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.html WHERE iduser2 = ?', [iduser]);
         }
         else if (tipo == 'js'){
-            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.js WHERE iduser1 = ?', [iduser]););
+            list = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.js WHERE iduser1 = ?', [iduser]);
         }
         res.status(201).json({
             data: list,
