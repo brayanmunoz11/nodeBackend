@@ -43,7 +43,7 @@ class UserServices {
     const result = await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
     const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE nombre = ?', [newUser.nombre]);
     
-    return rows
+    return rows[0]
   }
 }
 module.exports = UserServices;
