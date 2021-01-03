@@ -6,6 +6,7 @@ const pool = require('../database');
 let multer = require('multer');
 let upload = multer();
 
+
 let UserServices = require('./../services/users')
 const userService = new UserServices();
 
@@ -52,9 +53,9 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
     };
 
     let vaaaal = await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+    const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
     res.status(200).json({
-      data: rows,
+      data: user[0],
       message: "user updated"
     });
 
