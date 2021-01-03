@@ -39,7 +39,7 @@ router.post('/add', upload.fields([]), async (req, res, next) => {
     }
 });
 
-router.post('/list',  async (req, res, next) => {
+router.post('/list', upload.fields([]), async (req, res, next) => {
     const {tipo, id} = req.body;
     console.log(req.body)
     try {
@@ -63,12 +63,29 @@ router.post('/list',  async (req, res, next) => {
 });
 
 
-router.get('/delete/:id', async (req, res) => {
+router.post('/delete/:id',upload.fields([]), async (req, res,next) => {
     const { id } = req.params;
-    await pool.query('DELETE FROM heroku_ac61479f38e9e23.css WHERE ID = ?', [id]);
-    req.flash('success', 'Link Removed Successfully');
-    res.redirect('/links');
+    const { tipo } = req.body;
+
+    try {
+        
+        if (tipo == 'css'){
+            await pool.query('DELETE FROM heroku_ac61479f38e9e23.css WHERE idcss = ?', [id]);
+        }
+        else if (tipo == 'html'){
+            await pool.query('DELETE FROM heroku_ac61479f38e9e23.html WHERE idhtml = ?', [id]);
+        }
+        else if (tipo == 'js'){
+            await pool.query('DELETE FROM heroku_ac61479f38e9e23.js WHERE idjs = ?', [id]);
+        }
+        res.status(201).json({
+            message: 'file deleted'
+        });
+    }catch(err){
+        next(err);
+    }       
 });
+
 
 /*router.get('/edit/:id', async (req, res) => {
     const { id } = req.params;
@@ -76,7 +93,7 @@ router.get('/delete/:id', async (req, res) => {
     res.render('links/edit', {link: links[0]});
 });*/
 
-router.post('/edit/:id', async (req, res, next)=>{
+router.post('/edit/:id', upload.fields([]), async (req, res, next)=>{
     const { id } = req.params;
     const { nombre, cuerpo, tipo} = req.body;
     const newArchive = {
