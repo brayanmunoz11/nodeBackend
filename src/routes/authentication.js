@@ -88,19 +88,25 @@ console.log(user1);
 });
 
 
-router.post('/useredit', async (req, res) => {
+router.post('/useredit', upload.fields([]), async (req, res) => {
   
   const { nombre,apellido,usuario,email,id} = req.body; 
- const password = await pool.query('SELECT password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+
   const newUser = {
       nombre , 
       apellido ,
       usuario ,
       email ,
-      password
+
   };
-  console.log(newUser);
+
   await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
+  const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [nombre]);
+  res.status(200).json({
+    data: rows,
+    message: "user updated"
+  });
+
 
 });
 
