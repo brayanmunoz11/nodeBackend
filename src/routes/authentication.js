@@ -36,7 +36,7 @@ router.post('/signin', upload.fields([]), async (req, res, next) => {
 });
 
 
-router.put('/useredit/:id', upload.fields([]), async (req, res) => {
+router.post('/useredit/:id', upload.fields([]), async (req, res) => {
   const { id } = req.params;
   const { nombre,apellido,usuario,email} = req.body; 
 
