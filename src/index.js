@@ -5,15 +5,16 @@ const path = require('path');
 const flash = require('connect-flash');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-const passport = require('passport');
+// const passport = require('passport');
 
 
 const { database } = require('./keys');
 
 // Intializations
 const app = express();
-require('./lib/passport');
-
+const cors = require('cors');
+// require('./lib/passport');
+app.use(cors());
 
 // Settings
 app.set('port', process.env.PORT || 4000);
@@ -30,10 +31,10 @@ app.engine('.hbs', exphbs({
 // Middlewares
 app.use(flash());
 app.use(morgan('dev'));
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 
 app.use(session({
