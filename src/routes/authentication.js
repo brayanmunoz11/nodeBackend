@@ -95,7 +95,7 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
 
     const passwordencriptado = await helpers.encryptPassword(newpassword);
 
-    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [passwordencriptado,id]);
 
     res.status(200).json({
       message: "password update",
@@ -124,38 +124,15 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
 router.post('/updatePhoto/:id', upload.fields('foto'), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { file } = req.file;
+    const { url } = req.file;
 
-    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/didiblsne/image/upload`
-    const CLOUDINARY_UPLOAD_PRESET = 'pqq4ikys';
-
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-    const res = await axios.post(
-      CLOUDINARY_URL,
-      formData,
-      {
-          headers: {
-              'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress (e) {
-              let progress = Math.round((e.loaded * 100.0) / e.total);
-              console.log(progress);
-              imageUploadbar.setAttribute('value', progress);
-          }
-      }
-  );
-  console.log(res.datasecure_url);
-
-
-    
+    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
 
   } catch (err) {
     next(err);
   }
 
-
+});
 
 
 module.exports = router;
