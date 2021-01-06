@@ -6,16 +6,15 @@ const pool = require('../database');
 let multer = require('multer');
 let upload = multer();
 
-
 let UserServices = require('./../services/users')
 const userService = new UserServices();
 
 router.post('/signup', upload.fields([]), async (req, res, next) => {
   try {
-    const user = await userService.createUser(req.body)
+    const {user, message} = await userService.createUser(req.body)
     res.status(200).json({
       data: user,
-      message: 'user created'
+      message: message,
     });
   }
   catch (err) {
@@ -62,6 +61,7 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+<<<<<<< HEAD
 
 
 });
@@ -120,6 +120,8 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   catch (err) {
     next(err);
   }
+=======
+>>>>>>> b4935bfbb08f946ee20830c6ce73a2b1b0783b27
 });
 
 

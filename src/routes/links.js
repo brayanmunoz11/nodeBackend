@@ -7,7 +7,6 @@ let multer = require('multer');
 let upload = multer();
 
 router.post('/add', upload.fields([]), async (req, res, next) => {
-    // console.log(req.body)
     try {
         let valid = false;
         const { nombre, cuerpo, iduser, tipo } = req.body;
@@ -41,7 +40,6 @@ router.post('/add', upload.fields([]), async (req, res, next) => {
 
 router.post('/list', upload.fields([]), async (req, res, next) => {
     const {tipo, id} = req.body;
-    console.log(req.body)
     try {
         let list
         if (tipo == 'css'){
@@ -68,7 +66,6 @@ router.post('/delete/:id',upload.fields([]), async (req, res,next) => {
     const { tipo } = req.body;
 
     try {
-        
         if (tipo == 'css'){
             await pool.query('DELETE FROM heroku_ac61479f38e9e23.css WHERE idcss = ?', [id]);
         }
@@ -83,15 +80,9 @@ router.post('/delete/:id',upload.fields([]), async (req, res,next) => {
         });
     }catch(err){
         next(err);
-    }       
+    }
 });
 
-
-/*router.get('/edit/:id', async (req, res) => {
-    const { id } = req.params;
-    const links = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.css WHERE id = ?', [id]);
-    res.render('links/edit', {link: links[0]});
-});*/
 
 router.post('/edit/:id', upload.fields([]), async (req, res, next)=>{
     const { id } = req.params;
@@ -100,9 +91,8 @@ router.post('/edit/:id', upload.fields([]), async (req, res, next)=>{
         nombre,
         cuerpo,
     };
-
+    console.log(req.body)
     try {
-        
         if (tipo == 'css'){
             await pool.query('UPDATE heroku_ac61479f38e9e23.css set ? WHERE idcss = ?', [newArchive, id]);
         }
@@ -117,8 +107,7 @@ router.post('/edit/:id', upload.fields([]), async (req, res, next)=>{
         });
     }catch(err){
         next(err);
-    }       
+    }
 });
-
 
 module.exports = router;
