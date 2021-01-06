@@ -51,7 +51,7 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
 
     };
 
-    let vaaaal = await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
     const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
     res.status(200).json({
       data: user[0],
@@ -61,7 +61,6 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-<<<<<<< HEAD
 
 
 });
@@ -120,9 +119,41 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   catch (err) {
     next(err);
   }
-=======
->>>>>>> b4935bfbb08f946ee20830c6ce73a2b1b0783b27
 });
+
+router.post('/updatePhoto/:id', upload.fields('foto'), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { file } = req.file;
+
+    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/didiblsne/image/upload`
+    const CLOUDINARY_UPLOAD_PRESET = 'pqq4ikys';
+
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const res = await axios.post(
+      CLOUDINARY_URL,
+      formData,
+      {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          },
+          onUploadProgress (e) {
+              let progress = Math.round((e.loaded * 100.0) / e.total);
+              console.log(progress);
+              imageUploadbar.setAttribute('value', progress);
+          }
+      }
+  );
+  console.log(res.datasecure_url);
+
+
+    
+
+  } catch (err) {
+    next(err);
+  }
 
 
 
