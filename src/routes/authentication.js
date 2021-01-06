@@ -121,10 +121,10 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   }
 });
 
-router.post('/updatePhoto/:id', upload.fields('foto'), async (req, res, next) => {
+router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { url } = req.file;
+    const { url } = req.body;
 
     await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
 
