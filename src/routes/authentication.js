@@ -63,6 +63,26 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
   }
 });
 
+router.post('/updatePhoto', upload.single('foto'), async (req, res, next) => {
+  try {
+    // const { id } = req.params;
+    // const { nombre, apellido, usuario, email } = req.body;
+    console.log(req.file)
+
+
+
+
+    // res.status(200).json({
+    //   data: user[0],
+    //   message: "user updated"
+    // });
+
+  }catch (err) {
+    next(err);
+  }
+});
+
+
 
 
 
