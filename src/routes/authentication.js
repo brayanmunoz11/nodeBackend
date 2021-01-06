@@ -58,9 +58,70 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
       message: "user updated"
     });
 
-  }catch (err) {
+  } catch (err) {
     next(err);
   }
+<<<<<<< HEAD
+
+
+});
+
+router.post('/validpassword/:id', upload.fields([]), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    const passwordBD = await pool.query('SELECT password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+
+
+    const validPassword = await helpers.matchPassword(password, passwordBD)
+    if (validPassword) {
+      message = 'password correcto';
+    } else {
+      message = 'password incorrecto';
+    }
+    res.status(200).json({
+      message: message,
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { newpassword } = req.body;
+
+    const passwordencriptado = await helpers.encryptPassword(newpassword);
+
+    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+
+    res.status(200).json({
+      message: "password update",
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query('DELETE FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+
+    res.status(200).json({
+      message: "user delete",
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+=======
+>>>>>>> b4935bfbb08f946ee20830c6ce73a2b1b0783b27
 });
 
 router.post('/updatePhoto', upload.single('foto'), async (req, res, next) => {
