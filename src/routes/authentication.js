@@ -61,7 +61,6 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-<<<<<<< HEAD
 
 
 });
@@ -120,8 +119,6 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   catch (err) {
     next(err);
   }
-=======
->>>>>>> b4935bfbb08f946ee20830c6ce73a2b1b0783b27
 });
 
 router.post('/updatePhoto', upload.single('foto'), async (req, res, next) => {
