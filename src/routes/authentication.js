@@ -6,12 +6,15 @@ const pool = require('../database');
 let multer = require('multer');
 let upload = multer();
 
+// const FormData = require('form-data');
+// const axios = require('axios');
+
 let UserServices = require('./../services/users')
 const userService = new UserServices();
 
 router.post('/signup', upload.fields([]), async (req, res, next) => {
   try {
-    const {user, message} = await userService.createUser(req.body)
+    const { user, message } = await userService.createUser(req.body)
     res.status(200).json({
       data: user,
       message: message,
@@ -51,7 +54,7 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
 
     };
 
-    let vaaaal = await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
     const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
     res.status(200).json({
       data: user[0],
@@ -69,6 +72,7 @@ router.post('/validpassword/:id', upload.fields([]), async (req, res, next) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
+    let message
 
     const passwordBD = await pool.query('SELECT password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
@@ -121,27 +125,24 @@ router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   }
 });
 
-router.post('/updatePhoto', upload.single('foto'), async (req, res, next) => {
+router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
   try {
-    // const { id } = req.params;
-    // const { nombre, apellido, usuario, email } = req.body;
-    console.log(req.file)
+    const { id } = req.params;
+    const { url } = req.body;
+
+    console.log(req.body)
+    // var form = new FormData();
 
 
 
 
-    // res.status(200).json({
-    //   data: user[0],
-    //   message: "user updated"
-    // });
 
-  }catch (err) {
+
+  } catch (err) {
     next(err);
   }
+
 });
 
 
-
-
-
-module.exports = router;
+module.exports = router
