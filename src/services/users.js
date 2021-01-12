@@ -19,10 +19,10 @@ class UserServices {
         message = 'usario logeado';
         valid = true;
       } else {
-        message = 'password incorrecto';
+        message = 'Password incorrecto';
       }
     } else {
-      message = 'usuario no existe';
+      message = 'Usuario no existe';
     }
 
     return [users, message, valid]
