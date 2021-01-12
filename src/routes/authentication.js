@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const pool = require('../database');
+const helpers = require('../lib/helpers');
 
 let multer = require('multer');
 let upload = multer();
@@ -76,8 +77,9 @@ router.post('/validpassword/:id', upload.fields([]), async (req, res, next) => {
 
     const passwordBD = await pool.query('SELECT password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
+    // console.log(passwordBD[0].password);
 
-    const validPassword = await helpers.matchPassword(password, passwordBD)
+    const validPassword = await helpers.matchPassword(password, passwordBD[0].password)
     if (validPassword) {
       message = 'password correcto';
     } else {
@@ -99,7 +101,7 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
 
     const passwordencriptado = await helpers.encryptPassword(newpassword);
 
-    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
+    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [passwordencriptado,id]);
 
     res.status(200).json({
       message: "password update",
@@ -110,10 +112,10 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
   }
 });
 
-router.post('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
+router.get('/deleteuser/:id', upload.fields([]), async (req, res, next) => {
   try {
     const { id } = req.params;
-
+    // console.log(id);
     await pool.query('DELETE FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
     res.status(200).json({
@@ -130,19 +132,16 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
     const { id } = req.params;
     const { url } = req.body;
 
-    console.log(req.body)
-    // var form = new FormData();
+    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
 
-
-
-
-
+    res.status(200).json({
+      message: "user update photo",
+    });
 
   } catch (err) {
     next(err);
   }
 
 });
-
 
 module.exports = router
