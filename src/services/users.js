@@ -28,6 +28,7 @@ class UserServices {
     return [users, message, valid]
   }
   async createUser(user) {
+    // console.log(user);
     let userF = []
     let message = 'user created'
     let newUser = {
@@ -44,9 +45,9 @@ class UserServices {
       await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
       userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE nombre = ?', [newUser.nombre]);
     }catch(err){
-      if(err.sqlMessage.includes('usuario')){
+      if(err.sqlMessage.includes('usuario_UNIQUE')){
         message = 'Usuario no valido'
-      }else if(err.sqlMessage.includes('email')) {
+      }else if(err.sqlMessage.includes('email_UNIQUE')) {
         message = 'Email no valido'
       }
       // console.log(err.sqlMessage);
