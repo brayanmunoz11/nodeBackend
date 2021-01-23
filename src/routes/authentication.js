@@ -148,27 +148,27 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
   try {
     const { id } = req.params;
     const { zise, color, font } = req.body;
+    const iduserpreference = id;
 
     const newPreference = {
       zise,
       color,
       font,
-      id
+      iduserpreference
    };
 
 
 
     const existe = await pool.query('SELECT iduserpreference FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
 
-    console.log(existe);
 
     if (existe.length == 0 ){
       await pool.query('INSERT INTO heroku_ac61479f38e9e23.preferencias set ?', [newPreference]);
     }
     else{
-      await pool.query('UPDATE heroku_ac61479f38e9e23.preferencia set ? WHERE iduserpreference = ?', [newPreference, id]);
+      await pool.query('UPDATE heroku_ac61479f38e9e23.preferencias set ? WHERE iduserpreference = ?', [newPreference, id]);
     }
-    const preference  = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencia WHERE iduserpreference = ?', [id]);
+    const preference  = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
     
     res.status(200).json({
       data: preference,
