@@ -73,11 +73,11 @@ router.post('/validpassword/:id', upload.fields([]), async (req, res, next) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
-    let message
+    let message= "";
 
     const passwordBD = await pool.query('SELECT password FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
-    // console.log(passwordBD[0].password);
+    //console.log(passwordBD[0].password);
 
     const validPassword = await helpers.matchPassword(password, passwordBD[0].password)
     if (validPassword) {
@@ -100,15 +100,30 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
     const { newpassword } = req.body;
 
     const passwordencriptado = await helpers.encryptPassword(newpassword);
+    let message = "password update"
+    
+    
+    if (newpassword.length != 0){
+      await pool.query('UPDATE heroku_ac61479f38e9e23.user set password = ? WHERE id = ?', [passwordencriptado, id]);
+    }
+    else{
+      message = "Password vacio";
+    }
 
-    await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [passwordencriptado,id]);
+    
+
+
+    
+
 
     res.status(200).json({
-      message: "password update",
+      message: message,
     });
   }
   catch (err) {
+    console.log(err);
     next(err);
+    
   }
 });
 
@@ -132,7 +147,7 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
     const { id } = req.params;
     const { url } = req.body;
 
-    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.user set image = ? WHERE id = ?', [url, id]);
 
     res.status(200).json({
       message: "user update photo",
@@ -181,5 +196,24 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
   }
 
 });
+
+router.post('/comment/:id', upload.fields([]), async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { url } = req.body;
+
+    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+
+    res.status(200).json({
+      message: "user update photo",
+    });
+
+  } catch (err) {
+    next(err);
+  }
+
+});
+
+
 
 module.exports = router
