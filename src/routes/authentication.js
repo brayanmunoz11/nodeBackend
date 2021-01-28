@@ -98,8 +98,8 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
   try {
     const { id } = req.params;
     const { newpassword } = req.body;
-
     const passwordencriptado = await helpers.encryptPassword(newpassword);
+    console.log(passwordencriptado)
 
     await pool.query('UPDATE password FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [passwordencriptado,id]);
 
@@ -108,6 +108,7 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
     });
   }
   catch (err) {
+    console.log(err)
     next(err);
   }
 });
@@ -133,8 +134,10 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
     const { url } = req.body;
 
     await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+    const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
     res.status(200).json({
+      data: user,
       message: "user update photo",
     });
 
@@ -169,12 +172,11 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
       await pool.query('UPDATE heroku_ac61479f38e9e23.preferencias set ? WHERE iduserpreference = ?', [newPreference, id]);
     }
     const preference  = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
-    
+
     res.status(200).json({
       data: preference,
       message: "preferences user"
     });
-    
 
   } catch (err) {
     next(err);
