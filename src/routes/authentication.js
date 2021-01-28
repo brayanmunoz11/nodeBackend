@@ -137,11 +137,11 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
     const { id } = req.params;
     const { url } = req.body;
 
-    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.user set image = ? WHERE id = ?', [url, id]);
     const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
     res.status(200).json({
-      data: user,
+      data: user[0],
       message: "user update photo",
     });
 
