@@ -110,11 +110,6 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
       message = "Password vacio";
     }
 
-    
-
-
-    
-
 
     res.status(200).json({
       message: message,
@@ -162,14 +157,17 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
 router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { zise, color, font } = req.body;
+    const { zise, color, font, descargacomp, descargaunit, tema } = req.body;
     const iduserpreference = id;
 
     const newPreference = {
       zise,
       color,
       font,
-      iduserpreference
+      iduserpreference,
+      descargacomp,
+      descargaunit,
+      tema
    };
 
 
