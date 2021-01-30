@@ -52,7 +52,6 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
       apellido,
       usuario,
       email
-
     };
 
     await pool.query('UPDATE heroku_ac61479f38e9e23.user set ? WHERE id = ?', [newUser, id]);
@@ -61,7 +60,6 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
       data: user[0],
       message: "user updated"
     });
-
   } catch (err) {
     next(err);
   }
@@ -98,18 +96,16 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
   try {
     const { id } = req.params;
     const { newpassword } = req.body;
-
     const passwordencriptado = await helpers.encryptPassword(newpassword);
+    // console.log(passwordencriptado)
     let message = "password update"
-    
-    
+
     if (newpassword.length != 0){
       await pool.query('UPDATE heroku_ac61479f38e9e23.user set password = ? WHERE id = ?', [passwordencriptado, id]);
     }
     else{
       message = "Password vacio";
     }
-
 
     res.status(200).json({
       message: message,
@@ -118,7 +114,6 @@ router.post('/updatepassword/:id', upload.fields([]), async (req, res, next) => 
   catch (err) {
     console.log(err);
     next(err);
-    
   }
 });
 
@@ -143,8 +138,10 @@ router.post('/updatePhoto/:id', upload.fields([]), async (req, res, next) => {
     const { url } = req.body;
 
     await pool.query('UPDATE heroku_ac61479f38e9e23.user set image = ? WHERE id = ?', [url, id]);
+    const user = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE id = ?', [id]);
 
     res.status(200).json({
+      data: user[0],
       message: "user update photo",
     });
 
@@ -182,12 +179,11 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
       await pool.query('UPDATE heroku_ac61479f38e9e23.preferencias set ? WHERE iduserpreference = ?', [newPreference, id]);
     }
     const preference  = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
-    
+
     res.status(200).json({
       data: preference,
       message: "preferences user"
     });
-    
 
   } catch (err) {
     next(err);
