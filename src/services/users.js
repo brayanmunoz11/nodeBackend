@@ -55,16 +55,30 @@ class UserServices {
 
     return {user: userF[0], message}
   }
+  async createPreferences(user){
+    let newprefe = {
+      color: "#000000",
+      zise: "16px",
+      descargacomp: 1,
+      descargaunit: 1,
+      tema: 0,
+      iduserpreference: user.id
+    }
+    await pool.query('INSERT INTO heroku_ac61479f38e9e23.preferencias SET ? ', newprefe);
 
+    let userP = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [user.id]);
+    return {userP: userP[0]}
+  }
 
   async getPreferences(id){
+    let preferences = {}
     try {
-      const preferences = await pool.query('SELECT iduserpreference FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
+      preferences = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
 
     }catch(err){
       next(err);
     }
-    return {preferences}
+    return {preferences: preferences[0]}
   }
 }
 module.exports = UserServices;
