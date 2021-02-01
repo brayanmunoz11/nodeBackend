@@ -55,5 +55,16 @@ class UserServices {
 
     return {user: userF[0], message}
   }
+
+
+  async getPreferences(id){
+    try {
+      const preferences = await pool.query('SELECT iduserpreference FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
+
+    }catch(err){
+      next(err);
+    }
+    return {preferences}
+  }
 }
 module.exports = UserServices;

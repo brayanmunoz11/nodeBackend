@@ -30,8 +30,14 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
 router.post('/signin', upload.fields([]), async (req, res, next) => {
   try {
     const [user, message, valid] = await userService.getUser(req.body);
+    const {id} = user
+    console.log(id)
+
+    const {preferences} = await userService.getPreferences(id)
+
     res.status(200).json({
       data: user,
+      preferences: preferences,
       message: message,
       valid: valid
     });
@@ -164,10 +170,7 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
       iduserpreference
    };
 
-
-
     const existe = await pool.query('SELECT iduserpreference FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
-
 
     if (existe.length == 0 ){
       await pool.query('INSERT INTO heroku_ac61479f38e9e23.preferencias set ?', [newPreference]);
