@@ -199,15 +199,40 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
 
 });
 
+// router.post('/comment/:id', upload.fields([]), async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const { url } = req.body;
+
+//     await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+
+//     res.status(200).json({
+//       message: "user update photo",
+//     });
+
+//   } catch (err) {
+//     next(err);
+//   }
+
+// });
+
 router.post('/comment/:id', upload.fields([]), async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { url } = req.body;
+    const { puntuacion, comentario } = req.body;
 
-    await pool.query('UPDATE image FROM heroku_ac61479f38e9e23.user set ? WHERE id = ?', [url, id]);
+    const idusercomment = id;
+
+    const comment = {
+      puntuacion,
+      comentario,
+      idusercomment
+   };
+
+    await pool.query('INSERT INTO heroku_ac61479f38e9e23.comments set ?', [comment]);
 
     res.status(200).json({
-      message: "user update photo",
+      message: "user commented",
     });
 
   } catch (err) {
@@ -215,7 +240,5 @@ router.post('/comment/:id', upload.fields([]), async (req, res, next) => {
   }
 
 });
-
-
 
 module.exports = router
