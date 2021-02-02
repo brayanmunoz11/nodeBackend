@@ -174,6 +174,7 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
       descargaunit,
       tema
    };
+  //  console.log(req.body);
 
     const existe = await pool.query('SELECT iduserpreference FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
 
@@ -182,11 +183,13 @@ router.post('/userpreferences/:id',upload.fields([]),async (req, res, next) => {
     }
     else{
       await pool.query('UPDATE heroku_ac61479f38e9e23.preferencias set ? WHERE iduserpreference = ?', [newPreference, id]);
+      // console.log('aqui')
     }
-    const preference  = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
+    const preference = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
 
+    console.log(preference);
     res.status(200).json({
-      data: preference,
+      // data: preference,
       message: "preferences user"
     });
 
