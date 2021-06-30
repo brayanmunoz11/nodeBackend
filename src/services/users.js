@@ -9,8 +9,7 @@ class UserServices {
     var message = '';
     var users = {};
     var valid = false;
-
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [user.nombre]);
+    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE email = ?', [user.email]);
     if (rows.length > 0) {
       const user1 = rows[0];
       const validPassword = await helpers.matchPassword(user.password, user1.password)
@@ -32,9 +31,8 @@ class UserServices {
     let userF = []
     let message = 'user created'
     let newUser = {
-      nombre: user.nombre,
-      apellido: user.apellido,
-      usuario: user.usuario,
+      nombre: user.name,
+      usuario: user.dni,
       email: user.email,
       password: user.password
     }
@@ -55,6 +53,7 @@ class UserServices {
 
     return {user: userF[0], message}
   }
+
   async createPreferences(user){
     let newprefe = {
       color: "#000000",

@@ -16,11 +16,9 @@ const userService = new UserServices();
 router.post('/signup', upload.fields([]), async (req, res, next) => {
   try {
     const { user, message } = await userService.createUser(req.body)
-    const { userP } = await userService.createPreferences(user)
+    // const { userP } = await userService.createPreferences(user)
     res.status(200).json({
-      data: user,
-      config: userP,
-      message: message,
+      user
     });
   }
   catch (err) {
@@ -38,10 +36,7 @@ router.post('/signin', upload.fields([]), async (req, res, next) => {
     const {preferences} = await userService.getPreferences(id)
     console.log(preferences)
     res.status(200).json({
-      data: user,
-      preferences: preferences,
-      message: message,
-      valid: valid
+      user
     });
   }
   catch (err) {
