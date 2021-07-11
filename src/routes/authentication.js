@@ -14,11 +14,13 @@ let UserServices = require('./../services/users')
 const userService = new UserServices();
 
 router.post('/signup', upload.fields([]), async (req, res, next) => {
+  console.log(req.body);
   try {
     const { user, message } = await userService.createUser(req.body)
     // const { userP } = await userService.createPreferences(user)
     res.status(200).json({
-      user
+      user,
+      message
     });
   }
   catch (err) {
@@ -28,6 +30,7 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
 
 //SIGNIN
 router.post('/signin', upload.fields([]), async (req, res, next) => {
+  // console.log(req.body);
   try {
     const [user, message, valid] = await userService.getUser(req.body);
     const {id} = user
@@ -36,7 +39,9 @@ router.post('/signin', upload.fields([]), async (req, res, next) => {
     const {preferences} = await userService.getPreferences(id)
     console.log(preferences)
     res.status(200).json({
-      user
+      user,
+      message,
+      valid
     });
   }
   catch (err) {

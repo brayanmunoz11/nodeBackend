@@ -9,6 +9,7 @@ class UserServices {
     var message = '';
     var users = {};
     var valid = false;
+    // console.log(user.email)
     const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE email = ?', [user.email]);
     if (rows.length > 0) {
       const user1 = rows[0];
@@ -34,7 +35,8 @@ class UserServices {
       nombre: user.name,
       usuario: user.dni,
       email: user.email,
-      password: user.password
+      password: user.password,
+      apellido: user.apellido
     }
     newUser.password = await helpers.encryptPassword(user.password);
 
@@ -44,11 +46,11 @@ class UserServices {
       userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE nombre = ?', [newUser.nombre]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
-        message = 'Usuario no valido'
+        message = 'DNI no valido'
       }else if(err.sqlMessage.includes('email_UNIQUE')) {
         message = 'Email no valido'
       }
-      // console.log(err.sqlMessage);
+      console.log(err.sqlMessage);
     }
 
     return {user: userF[0], message}
