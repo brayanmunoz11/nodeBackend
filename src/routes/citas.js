@@ -43,4 +43,46 @@ router.get('/citaDoctor/:iddoc', async (req, res, next) => {
   }
 });
 
+router.get('/terminarCita/:idCita', async (req, res, next) => {
+  const {idCita} = req.params
+
+  try {
+    await pool.query('UPDATE heroku_ac61479f38e9e23.citas set ? WHERE idCita = ?', [{estado: 'terminada'}, idCita]);
+    res.status(200).json({
+      msg: 'cita terminada'
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.get('/listarDoctores/:especialidad/:turno', async (req, res, next) => {
+  const {especialidad, turno} = req.params
+  console.log({especialidad, turno})
+  try {
+    const doctores = await pool.query('SELECT u.id as idDoc, u.nombre, d.turno from heroku_ac61479f38e9e23.doctores as d JOIN heroku_ac61479f38e9e23.user as u on d.idUsuario = u.id WHERE d.especialidad = ? and d.turno = ?', [especialidad, turno]);
+    res.status(200).json({
+      doctores
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.get('/citasUserPro/:iduser/:estado', async (req, res, next) => {
+  const {iduser, estado} = req.params
+
+  try {
+    const citas = await pool.query('CALL heroku_ac61479f38e9e23.listarCitasUsuario(?,?)', [iduser, estado]);
+    res.status(200).json({
+      citas: citas[0]
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router
