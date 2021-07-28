@@ -49,7 +49,7 @@ class UserServices {
       if(err.sqlMessage.includes('usuario_UNIQUE')){
         message = 'El DNI ya esta registrado, ingrese uno valido'
       }else if(err.sqlMessage.includes('email_UNIQUE')) {
-        message = 'El DNI ya esta registrado, ingrese uno valido'
+        message = 'El Email ya esta registrado, ingrese uno valido'
       }
       console.log(err.sqlMessage);
     }
