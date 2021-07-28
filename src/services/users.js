@@ -28,17 +28,18 @@ class UserServices {
     return [users, message, valid]
   }
   async createUser(user) {
-    // console.log(user);
+    console.log(user.password[0]);
     let userF = []
     let message = 'user created'
     let newUser = {
       nombre: user.name,
       usuario: user.dni,
       email: user.email,
-      password: user.password,
-      apellido: user.apellido
+      password: user.password[0],
+      apellido: user.apellido,
+      tipoUsuario: user.tipoUsuario
     }
-    newUser.password = await helpers.encryptPassword(user.password);
+    newUser.password = await helpers.encryptPassword(user.password[0]);
 
     // Saving in the Database
     try{
@@ -46,9 +47,9 @@ class UserServices {
       userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE nombre = ?', [newUser.nombre]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
-        message = 'DNI no valido'
+        message = 'El DNI ya esta registrado, ingrese uno valido'
       }else if(err.sqlMessage.includes('email_UNIQUE')) {
-        message = 'Email no valido'
+        message = 'El DNI ya esta registrado, ingrese uno valido'
       }
       console.log(err.sqlMessage);
     }

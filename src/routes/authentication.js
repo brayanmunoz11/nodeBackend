@@ -14,7 +14,7 @@ let UserServices = require('./../services/users')
 const userService = new UserServices();
 
 router.post('/signup', upload.fields([]), async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const { user, message } = await userService.createUser(req.body)
     // const { userP } = await userService.createPreferences(user)

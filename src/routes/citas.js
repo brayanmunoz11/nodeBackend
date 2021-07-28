@@ -85,4 +85,40 @@ router.get('/citasUserPro/:iduser/:estado', async (req, res, next) => {
   }
 });
 
+
+router.get('/listarPacientes', async (req, res, next) => {
+  try {
+    const pacientes = await pool.query('CALL heroku_ac61479f38e9e23.listarPacientes()');
+    res.status(200).json({
+      pacientes: pacientes[0]
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+router.get('/listarCamas', async (req, res, next) => {
+  try {
+    const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
+    res.status(200).json({
+      camas: camas[0]
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.get('/listarDoctores', async (req, res, next) => {
+  try {
+    const doctores = await pool.query('CALL heroku_ac61479f38e9e23.listarDoctores()');
+    res.status(200).json({
+      doctores: doctores[0]
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router
