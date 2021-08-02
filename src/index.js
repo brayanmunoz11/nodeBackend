@@ -59,6 +59,7 @@ app.use((req, res, next) => {
 app.use(require('./routes/index'));
 app.use(require('./routes/authentication'));
 app.use(require('./routes/citas'));
+app.use(require('./routes/crear'));
 app.use('/links', require('./routes/links'));
 
 //Public
