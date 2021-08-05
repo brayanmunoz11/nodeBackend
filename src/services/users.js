@@ -44,7 +44,7 @@ class UserServices {
     // Saving in the Database
     try{
       await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
-      userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE nombre = ?', [newUser.nombre]);
+      userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [newUser.usuario]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
         message = 'El DNI ya esta registrado, ingrese uno valido'
