@@ -33,17 +33,18 @@ class UserServices {
     let message = 'user created'
     let newUser = {
       nombre: user.name,
-      usuario: user.dni,
-      email: user.email,
-      password: user.password[0],
       apellido: user.apellido,
-      tipoUsuario: user.tipoUsuario
+      usuario: user.dni,
+      sexo: user.sexo,
+      correo: user.email,
+      contrasena: user.password[0],
+      tipoUsuario: user.tipoUsuario,
     }
-    newUser.password = await helpers.encryptPassword(user.password[0]);
+    newUser.contrasena = await helpers.encryptPassword(user.password[0]);
 
     // Saving in the Database
     try{
-      await pool.query('INSERT INTO heroku_ac61479f38e9e23.user SET ? ', newUser);
+      await pool.query('CALL heroku_ac61479f38e9e23.registrarPaciente(?) ', [Object.values(newUser)]);
       userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [newUser.usuario]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
