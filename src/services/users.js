@@ -10,10 +10,11 @@ class UserServices {
     var users = {};
     var valid = false;
     // console.log(user.email)
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE email = ?', [user.email]);
+    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE dni = ?', [user.dni]);
     if (rows.length > 0) {
       const user1 = rows[0];
       const validPassword = await helpers.matchPassword(user.password, user1.password)
+      console.log(validPassword)
       if (validPassword) {
         users = user1;
         message = 'usario logeado';
@@ -28,24 +29,24 @@ class UserServices {
     return [users, message, valid]
   }
   async createUser(user) {
-    console.log(user.password[0]);
+    console.log(user);
     let userF = []
     let message = 'user created'
     let newUser = {
-      nombre: user.name,
-      apellido: user.apellido,
-      usuario: user.dni,
+      nombre: user.nombre,
+      apellidoP: user.apellidoP,
+      apellidoM: user.apellidoM,
+      dni: user.dni,
       sexo: user.sexo,
-      correo: user.email,
-      contrasena: user.password[0],
+      correo: user.correo,
+      contrasena: user.contrasena,
       tipoUsuario: user.tipoUsuario,
     }
-    newUser.contrasena = await helpers.encryptPassword(user.password[0]);
-
-    // Saving in the Database
+    newUser.contrasena = await helpers.encryptPassword(user.contrasena);
+    console.log(newUser.contrasena)
     try{
       await pool.query('CALL heroku_ac61479f38e9e23.registrarPaciente(?) ', [Object.values(newUser)]);
-      userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE usuario = ?', [newUser.usuario]);
+      userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE dni = ?', [newUser.dni]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
         message = 'El DNI ya esta registrado, ingrese uno valido'

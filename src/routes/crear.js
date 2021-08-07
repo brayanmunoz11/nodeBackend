@@ -81,4 +81,47 @@ router.post('/crearCama', upload.fields([]), async (req, res, next) => {
   }
 });
 
+router.post('/editarCama', upload.fields([]), async (req, res, next) => {
+  try {
+    console.log(req.body)
+    const { idCama, sala, estado, idUsuario } = req.body
+    const newCama = {
+      sala,
+      estado,
+      idUsuario
+    }
+    await pool.query('UPDATE heroku_ac61479f38e9e23.camas set ? where idcamas = ?', [newCama, idCama]);
+    const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
+
+    res.status(201).json({
+      camas: camas[0],
+      msg: 'Cama editada'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/editarPaciente', upload.fields([]), async (req, res, next) => {
+  try {
+    console.log(req.body)
+    // const { idCama, sala, estado, idUsuario } = req.body
+    // const newCama = {
+    //   sala,
+    //   estado,
+    //   idUsuario
+    // }
+    // await pool.query('UPDATE heroku_ac61479f38e9e23.camas set ? where idcamas = ?', [newCama, idCama]);
+    // const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
+
+    res.status(201).json({
+      // camas: camas[0],
+      msg: 'Paciente editada'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 module.exports = router

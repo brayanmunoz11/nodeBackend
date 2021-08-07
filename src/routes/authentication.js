@@ -29,15 +29,12 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
 });
 
 //SIGNIN
-router.post('/signin', upload.fields([]), async (req, res, next) => {
+router.post('/signin', async (req, res, next) => {
   // console.log(req.body);
   try {
     const [user, message, valid] = await userService.getUser(req.body);
-    const {id} = user
-    console.log(id)
+    console.log({user, message, valid})
 
-    const {preferences} = await userService.getPreferences(id)
-    console.log(preferences)
     res.status(200).json({
       user,
       message,
