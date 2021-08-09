@@ -10,11 +10,14 @@ class UserServices {
     var users = {};
     var valid = false;
     // console.log(user.email)
-    const rows = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE dni = ?', [user.dni]);
+    const rows = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
+
     if (rows.length > 0) {
       const user1 = rows[0];
       const validPassword = await helpers.matchPassword(user.password, user1.password)
-      console.log(validPassword)
+
+      delete user1['password']
+
       if (validPassword) {
         users = user1;
         message = 'usario logeado';
