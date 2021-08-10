@@ -44,12 +44,13 @@ class UserServices {
       correo: user.correo,
       contrasena: user.contrasena,
       tipoUsuario: user.tipoUsuario,
+      vigencia: user.vigencia,
     }
     newUser.contrasena = await helpers.encryptPassword(user.contrasena);
     console.log(newUser.contrasena)
     try{
       await pool.query('CALL heroku_ac61479f38e9e23.registrarPaciente(?) ', [Object.values(newUser)]);
-      userF = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.user WHERE dni = ?', [newUser.dni]);
+      userF = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [newUser.dni]);
     }catch(err){
       if(err.sqlMessage.includes('usuario_UNIQUE')){
         message = 'El DNI ya esta registrado, ingrese uno valido'
