@@ -30,7 +30,7 @@ router.post('/createCita', async (req, res, next) => {
 });
 
 router.get('/citaDoctor/:iddoc', async (req, res, next) => {
-  const {iddoc} = req.params
+  const { iddoc } = req.params
 
   try {
     const citas = await pool.query('CALL heroku_ac61479f38e9e23.todasCitas(?)', [iddoc]);
@@ -44,10 +44,10 @@ router.get('/citaDoctor/:iddoc', async (req, res, next) => {
 });
 
 router.get('/terminarCita/:idCita', async (req, res, next) => {
-  const {idCita} = req.params
+  const { idCita } = req.params
 
   try {
-    await pool.query('UPDATE heroku_ac61479f38e9e23.citas set ? WHERE idCita = ?', [{estado: 'terminada'}, idCita]);
+    await pool.query('UPDATE heroku_ac61479f38e9e23.citas set ? WHERE idCita = ?', [{ estado: 'terminada' }, idCita]);
     res.status(200).json({
       msg: 'cita terminada'
     });
@@ -58,8 +58,8 @@ router.get('/terminarCita/:idCita', async (req, res, next) => {
 });
 
 router.get('/listarDoctores/:especialidad/:turno', async (req, res, next) => {
-  const {especialidad, turno} = req.params
-  console.log({especialidad, turno})
+  const { especialidad, turno } = req.params
+  console.log({ especialidad, turno })
   try {
     const doctores = await pool.query('SELECT u.id as idDoc, u.nombre, u.apellidoP, u.apellidoM, d.turno from heroku_ac61479f38e9e23.doctores as d JOIN heroku_ac61479f38e9e23.user as u on d.idUsuario = u.id WHERE d.especialidad = ? and d.turno = ?', [especialidad, turno]);
     res.status(200).json({
@@ -71,13 +71,15 @@ router.get('/listarDoctores/:especialidad/:turno', async (req, res, next) => {
   }
 });
 
-router.get('/citasUserPro/:iduser/:estado', async (req, res, next) => {
-  const {iduser, estado} = req.params
+router.get('/citasUser/:iduser', async (req, res, next) => {
+  const { iduser } = req.params
 
   try {
-    const citas = await pool.query('CALL heroku_ac61479f38e9e23.listarCitasUsuario(?,?)', [iduser, estado]);
+    const citasPro = await pool.query('CALL heroku_ac61479f38e9e23.listarCitasUsuario(?,?)', [iduser, 'programada']);
+    const citasTer = await pool.query('CALL heroku_ac61479f38e9e23.listarCitasUsuario(?,?)', [iduser, 'terminada']);
     res.status(200).json({
-      citas: citas[0]
+      citasPro: citasPro[0],
+      citasTer: citasTer[0]
     });
   }
   catch (err) {

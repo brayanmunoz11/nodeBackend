@@ -1,34 +1,40 @@
 const pool = require('../database');
 const helpers = require('../lib/helpers');
 class UserServices {
-  constructor(){
+  constructor() {
 
   }
 
   async getUser(user) {
-    var message = '';
+    var message = 'Usuario no existe';
     var users = {};
     var valid = false;
-    // console.log(user.email)
-    const rows = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
+    var usuario = []
 
-    if (rows.length > 0) {
-      const user1 = rows[0];
-      const validPassword = await helpers.matchPassword(user.password, user1.password)
+    const userType = await pool.query('SELECT tipoUsuario FROM user WHERE dni = ?', [user.dni]);
 
-      delete user1['password']
-
-      if (validPassword) {
-        users = user1;
-        message = 'usario logeado';
-        valid = true;
-      } else {
-        message = 'Password incorrecto';
+    if (userType.length > 0) {
+      const type = userType[0].tipoUsuario
+      if (type === 'paciente') {
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
+      } else if (type === 'doctor') {
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, d.sexo, d.especialidad, d.turno FROM user as u join doctores as d on u.id = d.idUsuario WHERE u.dni = ?', [user.dni]);
       }
     } else {
-      message = 'Usuario no existe';
+      return [users, message, valid]
     }
 
+    const user1 = usuario[0];
+    const validPassword = await helpers.matchPassword(user.password, user1.password)
+    delete user1['password']
+
+    if (validPassword) {
+      users = user1;
+      message = 'usario logeado';
+      valid = true;
+    } else {
+      message = 'Password incorrecto';
+    }
     return [users, message, valid]
   }
   async createUser(user) {
@@ -48,22 +54,22 @@ class UserServices {
     }
     newUser.contrasena = await helpers.encryptPassword(user.contrasena);
     console.log(newUser.contrasena)
-    try{
+    try {
       await pool.query('CALL heroku_ac61479f38e9e23.registrarPaciente(?) ', [Object.values(newUser)]);
       userF = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [newUser.dni]);
-    }catch(err){
-      if(err.sqlMessage.includes('usuario_UNIQUE')){
+    } catch (err) {
+      if (err.sqlMessage.includes('usuario_UNIQUE')) {
         message = 'El DNI ya esta registrado, ingrese uno valido'
-      }else if(err.sqlMessage.includes('email_UNIQUE')) {
+      } else if (err.sqlMessage.includes('email_UNIQUE')) {
         message = 'El Email ya esta registrado, ingrese uno valido'
       }
       console.log(err.sqlMessage);
     }
 
-    return {user: userF[0], message}
+    return { user: userF[0], message }
   }
 
-  async createPreferences(user){
+  async createPreferences(user) {
     let newprefe = {
       color: "#000000",
       zise: "16px",
@@ -75,18 +81,18 @@ class UserServices {
     await pool.query('INSERT INTO heroku_ac61479f38e9e23.preferencias SET ? ', newprefe);
 
     let userP = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [user.id]);
-    return {userP: userP[0]}
+    return { userP: userP[0] }
   }
 
-  async getPreferences(id){
+  async getPreferences(id) {
     let preferences = {}
     try {
       preferences = await pool.query('SELECT * FROM heroku_ac61479f38e9e23.preferencias WHERE iduserpreference = ?', [id]);
 
-    }catch(err){
+    } catch (err) {
       next(err);
     }
-    return {preferences: preferences[0]}
+    return { preferences: preferences[0] }
   }
 }
 module.exports = UserServices;
