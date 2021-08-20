@@ -123,4 +123,33 @@ router.get('/listarDoctores', async (req, res, next) => {
   }
 });
 
+router.get('/listarFamiliares/:iduser', async (req, res, next) => {
+  const {iduser} = req.params;
+  try {
+    const familiares = await pool.query('SELECT * from familiares WHERE idUsuario = ?', [iduser]);
+    res.status(200).json({
+      familiares: familiares
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
+router.get('/infoPaciente/:dni', async (req, res, next) => {
+  const {dni} = req.params;
+  try {
+    const usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [dni]);
+    const familiares = await pool.query('SELECT * from familiares WHERE idUsuario = ?', [usuario[0].id]);
+    delete usuario[0]['password']
+    res.status(200).json({
+      usuario: usuario[0],
+      familiares: familiares
+    });
+  }
+  catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router

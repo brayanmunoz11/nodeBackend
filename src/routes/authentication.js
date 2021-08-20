@@ -32,13 +32,14 @@ router.post('/signup', upload.fields([]), async (req, res, next) => {
 router.post('/signin', async (req, res, next) => {
   // console.log(req.body);
   try {
-    const [user, message, valid] = await userService.getUser(req.body);
-    console.log({user, message, valid})
+    const [user, message, valid, familiares] = await userService.getUser(req.body);
+    // console.log({user, message, valid, familiares})
 
     res.status(200).json({
       user,
       message,
-      valid
+      valid,
+      familiares
     });
   }
   catch (err) {

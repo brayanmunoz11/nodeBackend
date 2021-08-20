@@ -34,12 +34,14 @@ router.post('/crearDoctor', upload.fields([]), async (req, res, next) => {
 });
 router.post('/crearPaciente', upload.fields([]), async (req, res, next) => {
   try {
-    const { nombre, apellido, usuario, sexo, vigencia, tipoSeguro, correo, contrasena, centro } = req.body;
+    console.log(req.body)
+    const { nombre, apellidoP, apellidoM, dni, sexo, vigencia, tipoSeguro, correo, contrasena, centro } = req.body;
     const passwordencriptado = await helpers.encryptPassword(contrasena);
     const newPaciente = {
       nombre,
-      apellido,
-      usuario,
+      apellidoP,
+      apellidoM,
+      dni,
       sexo,
       vigencia,
       tipoSeguro,
@@ -104,18 +106,19 @@ router.post('/editarCama', upload.fields([]), async (req, res, next) => {
 
 router.post('/editarPaciente', upload.fields([]), async (req, res, next) => {
   try {
-    console.log(req.body)
-    // const { idCama, sala, estado, idUsuario } = req.body
-    // const newCama = {
-    //   sala,
-    //   estado,
-    //   idUsuario
-    // }
-    // await pool.query('UPDATE heroku_ac61479f38e9e23.camas set ? where idcamas = ?', [newCama, idCama]);
-    // const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
+    const { id, correo, centro, fecha } = req.body
+    const userEdit = {
+      email: correo,
+    }
+    const pacienteEdit = {
+      vigencia: fecha,
+      centro: centro
+    }
+
+    await pool.query('UPDATE user set ? where id = ?', [userEdit, id]);
+    await pool.query('UPDATE pacientes set ? where idUsuario = ?', [pacienteEdit, id]);
 
     res.status(201).json({
-      // camas: camas[0],
       msg: 'Paciente editada'
     });
   } catch (err) {

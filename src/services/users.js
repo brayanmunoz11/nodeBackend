@@ -10,6 +10,7 @@ class UserServices {
     var users = {};
     var valid = false;
     var usuario = []
+    let familiares = []
 
     const userType = await pool.query('SELECT tipoUsuario FROM user WHERE dni = ?', [user.dni]);
 
@@ -19,15 +20,17 @@ class UserServices {
         usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
       } else if (type === 'doctor') {
         usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, d.sexo, d.especialidad, d.turno FROM user as u join doctores as d on u.id = d.idUsuario WHERE u.dni = ?', [user.dni]);
+      } else if (type === 'administrador') {
+        usuario = await pool.query('SELECT id, nombre, apellidoP, apellidoM, dni, email, image, password, tipoUsuario FROM user WHERE dni = ?', [user.dni]);
       }
     } else {
-      return [users, message, valid]
+      return [users, message, valid, familiares]
     }
 
     const user1 = usuario[0];
     const validPassword = await helpers.matchPassword(user.password, user1.password)
     delete user1['password']
-
+    familiares = await pool.query('SELECT * from familiares WHERE idUsuario = ?', [user1.id]);
     if (validPassword) {
       users = user1;
       message = 'usario logeado';
@@ -35,7 +38,7 @@ class UserServices {
     } else {
       message = 'Password incorrecto';
     }
-    return [users, message, valid]
+    return [users, message, valid, familiares]
   }
   async createUser(user) {
     console.log(user);
