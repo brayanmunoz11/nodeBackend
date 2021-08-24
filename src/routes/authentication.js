@@ -69,8 +69,6 @@ router.post('/useredit/:id', upload.fields([]), async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-
-
 });
 
 router.post('/validpassword/:id', upload.fields([]), async (req, res, next) => {

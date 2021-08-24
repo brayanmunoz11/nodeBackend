@@ -138,8 +138,25 @@ router.get('/listarFamiliares/:iduser', async (req, res, next) => {
 
 router.get('/infoPaciente/:dni', async (req, res, next) => {
   const {dni} = req.params;
+  let usuario = []
   try {
-    const usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [dni]);
+    const userType = await pool.query('SELECT tipoUsuario FROM user WHERE dni = ?', [dni]);
+
+    // const usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, u.direccion, u.fechanac, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [dni]);
+
+    if (userType.length > 0) {
+      const type = userType[0].tipoUsuario
+      if (type === 'paciente') {
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, u.direccion, u.fechanac, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [dni]);
+      } else if (type === 'doctor') {
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, u.direccion, u.fechanac, d.sexo, d.especialidad, d.turno FROM user as u join doctores as d on u.id = d.idUsuario WHERE u.dni = ?', [dni]);
+      }
+    } else {
+      res.status(200).json({
+        msg: 'nada'
+      });
+    }
+
     const familiares = await pool.query('SELECT * from familiares WHERE idUsuario = ?', [usuario[0].id]);
     delete usuario[0]['password']
     res.status(200).json({
@@ -151,5 +168,7 @@ router.get('/infoPaciente/:dni', async (req, res, next) => {
     next(err);
   }
 });
+
+
 
 module.exports = router

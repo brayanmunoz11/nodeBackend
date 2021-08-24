@@ -9,18 +9,21 @@ let upload = multer();
 
 router.post('/crearDoctor', upload.fields([]), async (req, res, next) => {
   try {
-    const { nombre, apellido, usuario, sexo, especialidad, turno, correo, contrasena } = req.body;
-    const passwordencriptado = await helpers.encryptPassword(contrasena);
+    const { nombre, apellidoP, apellidoM, dni, sexo, direccion, fechanac, especialidad, turno, correo, password } = req.body;
+    const passwordencriptado = await helpers.encryptPassword(password);
     const newDoctor = {
       nombre,
-      apellido,
-      usuario,
+      apellidoP,
+      apellidoM,
+      dni,
       sexo,
       especialidad,
       turno,
       correo,
       contrasena: passwordencriptado,
-      tipoUsuario: 'doctor'
+      tipoUsuario: 'doctor',
+      direccion,
+      fechanac
     }
     await pool.query('CALL heroku_ac61479f38e9e23.crearDoctor(?)', [Object.values(newDoctor)]);
     const doctores = await pool.query('CALL heroku_ac61479f38e9e23.listarDoctores()');
@@ -35,8 +38,8 @@ router.post('/crearDoctor', upload.fields([]), async (req, res, next) => {
 router.post('/crearPaciente', upload.fields([]), async (req, res, next) => {
   try {
     console.log(req.body)
-    const { nombre, apellidoP, apellidoM, dni, sexo, vigencia, tipoSeguro, correo, contrasena, centro } = req.body;
-    const passwordencriptado = await helpers.encryptPassword(contrasena);
+    const { nombre, apellidoP, apellidoM, dni, sexo, direccion, fechanac, vigencia, tipoSeguro, correo, password, centro } = req.body;
+    const passwordencriptado = await helpers.encryptPassword(password);
     const newPaciente = {
       nombre,
       apellidoP,
@@ -48,7 +51,9 @@ router.post('/crearPaciente', upload.fields([]), async (req, res, next) => {
       correo,
       contrasena: passwordencriptado,
       tipoUsuario: 'paciente',
-      centro
+      centro,
+      direccion,
+      fechanac
     }
     await pool.query('CALL heroku_ac61479f38e9e23.crearPaciente(?)', [Object.values(newPaciente)]);
     const pacientes = await pool.query('CALL heroku_ac61479f38e9e23.listarPacientes()');
@@ -64,11 +69,11 @@ router.post('/crearPaciente', upload.fields([]), async (req, res, next) => {
 router.post('/crearCama', upload.fields([]), async (req, res, next) => {
   try {
     console.log(req.body)
-    const { sala, ocupada, paciente } = req.body
+    const { sala, paciente } = req.body
 
     const newCama = {
       sala,
-      estado: ocupada,
+      estado: 'Ocupada',
       idUsuario: paciente
     }
     await pool.query('CALL heroku_ac61479f38e9e23.crearCama(?)', [Object.values(newCama)]);
@@ -84,19 +89,20 @@ router.post('/crearCama', upload.fields([]), async (req, res, next) => {
 });
 
 router.post('/editarCama', upload.fields([]), async (req, res, next) => {
+  console.log(req.body)
   try {
-    console.log(req.body)
-    const { idCama, sala, estado, idUsuario } = req.body
+    const { id, sala, paciente: idUsuario } = req.body
     const newCama = {
       sala,
-      estado,
-      idUsuario
+      estado: (idUsuario === 'Sin Paciente') ? 'Desocupada' : 'Ocupada',
+      idUsuario: (idUsuario === 'Sin Paciente') ? null : idUsuario
     }
-    await pool.query('UPDATE heroku_ac61479f38e9e23.camas set ? where idcamas = ?', [newCama, idCama]);
+    // console.log({ idCama, sala, idUsuario })
+    await pool.query('UPDATE camas set ? where idcamas = ?', [newCama, id]);
     const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
 
     res.status(201).json({
-      camas: camas[0],
+      data: camas[0],
       msg: 'Cama editada'
     });
   } catch (err) {
@@ -106,19 +112,21 @@ router.post('/editarCama', upload.fields([]), async (req, res, next) => {
 
 router.post('/editarPaciente', upload.fields([]), async (req, res, next) => {
   try {
-    const { id, correo, centro, fecha } = req.body
+    const { id, correo, centro, vigencia } = req.body
     const userEdit = {
       email: correo,
     }
     const pacienteEdit = {
-      vigencia: fecha,
+      vigencia: vigencia,
       centro: centro
     }
 
     await pool.query('UPDATE user set ? where id = ?', [userEdit, id]);
     await pool.query('UPDATE pacientes set ? where idUsuario = ?', [pacienteEdit, id]);
+    const data = await pool.query('CALL heroku_ac61479f38e9e23.listarPacientes()');
 
     res.status(201).json({
+      data: data[0],
       msg: 'Paciente editada'
     });
   } catch (err) {
@@ -126,5 +134,41 @@ router.post('/editarPaciente', upload.fields([]), async (req, res, next) => {
   }
 });
 
+router.post('/editarPersonal', upload.fields([]), async (req, res, next) => {
+  try {
+    const { id, correo, turno } = req.body
+    const userEdit = {
+      email: correo,
+    }
+    const personalEdit = {
+      turno: turno
+    }
+
+    await pool.query('UPDATE user set ? where id = ?', [userEdit, id]);
+    await pool.query('UPDATE doctores set ? where idUsuario = ?', [personalEdit, id]);
+    const data = await pool.query('CALL heroku_ac61479f38e9e23.listarDoctores()');
+
+    console.log(req.body)
+    res.status(201).json({
+      data: data[0],
+      msg: 'Paciente editada'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+router.get('/deletecama/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    console.log(id)
+    await pool.query('DELETE FROM camas WHERE idcamas = ?', [id]);
+
+    res.status(201).json({
+      msg: 'cama eliminada'
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router
