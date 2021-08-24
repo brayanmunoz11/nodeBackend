@@ -17,9 +17,9 @@ class UserServices {
     if (userType.length > 0) {
       const type = userType[0].tipoUsuario
       if (type === 'paciente') {
-        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, u.direccion, u.fechanac, p.sexo, p.vigencia, p.tipoSeguro, p.centro FROM user as u join pacientes as p on u.id = p.idUsuario WHERE u.dni = ?', [user.dni]);
       } else if (type === 'doctor') {
-        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, d.sexo, d.especialidad, d.turno FROM user as u join doctores as d on u.id = d.idUsuario WHERE u.dni = ?', [user.dni]);
+        usuario = await pool.query('SELECT u.id, u.nombre, u.apellidoP, u.apellidoM, u.dni, u.email, u.image, u.password, u.tipoUsuario, u.direccion, u.fechanac, d.sexo, d.especialidad, d.turno FROM user as u join doctores as d on u.id = d.idUsuario WHERE u.dni = ?', [user.dni]);
       } else if (type === 'administrador') {
         usuario = await pool.query('SELECT id, nombre, apellidoP, apellidoM, dni, email, image, password, tipoUsuario FROM user WHERE dni = ?', [user.dni]);
       }
