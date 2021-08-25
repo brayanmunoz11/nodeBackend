@@ -32,6 +32,17 @@ router.post('/crearDoctor', upload.fields([]), async (req, res, next) => {
       msg: 'Doctor creado'
     });
   } catch (err) {
+    const doctores = await pool.query('CALL heroku_ac61479f38e9e23.listarDoctores()');
+    let message = ''
+    if (err.sqlMessage.includes('usuario_UNIQUE')) {
+      message = 'El DNI ya esta registrado, ingrese uno valido'
+    } else if (err.sqlMessage.includes('email_UNIQUE')) {
+      message = 'El Email ya esta registrado, ingrese uno valido'
+    }
+    res.status(201).json({
+      doctores: doctores[0],
+      msg: message
+    });
     next(err);
   }
 });
@@ -63,6 +74,17 @@ router.post('/crearPaciente', upload.fields([]), async (req, res, next) => {
       msg: 'Paciente creado'
     });
   } catch (err) {
+    const pacientes = await pool.query('CALL heroku_ac61479f38e9e23.listarPacientes()');
+    let message = ''
+    if (err.sqlMessage.includes('usuario_UNIQUE')) {
+      message = 'El DNI ya esta registrado, ingrese uno valido'
+    } else if (err.sqlMessage.includes('email_UNIQUE')) {
+      message = 'El Email ya esta registrado, ingrese uno valido'
+    }
+    res.status(201).json({
+      paciente: pacientes[0],
+      msg: message
+    });
     next(err);
   }
 });
@@ -89,20 +111,28 @@ router.post('/crearCama', upload.fields([]), async (req, res, next) => {
 });
 
 router.post('/editarCama', upload.fields([]), async (req, res, next) => {
-  console.log(req.body)
   try {
     const { id, sala, paciente: idUsuario } = req.body
+    console.log(req.body)
     const newCama = {
       sala,
-      estado: (idUsuario === 'Sin Paciente') ? 'Desocupada' : 'Ocupada',
-      idUsuario: (idUsuario === 'Sin Paciente') ? null : idUsuario
+      estado: (idUsuario === 'Sin paciente') ? 'Desocupada' : 'Ocupada',
+      idUsuario: (idUsuario === 'Sin paciente') ? null : idUsuario
     }
     // console.log({ idCama, sala, idUsuario })
     await pool.query('UPDATE camas set ? where idcamas = ?', [newCama, id]);
     const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
 
+    const newcamas = await pool.query('SELECT * from camas where idUsuario IS NULL');
+    // camas[0].concat(newcamas)
+    var newc
+    if(newcamas.length > 0) {
+      newc = [...camas[0], newcamas[0]]
+    }else {
+      newc = [...camas[0]]
+    }
     res.status(201).json({
-      data: camas[0],
+      data: newc,
       msg: 'Cama editada'
     });
   } catch (err) {

@@ -102,8 +102,16 @@ router.get('/listarPacientes', async (req, res, next) => {
 router.get('/listarCamas', async (req, res, next) => {
   try {
     const camas = await pool.query('CALL heroku_ac61479f38e9e23.listarCamas()');
+    const newcamas = await pool.query('SELECT * from camas where idUsuario IS NULL');
+    // camas[0].concat(newcamas)
+    var newc
+    if(newcamas.length > 0) {
+      newc = [...camas[0], newcamas[0]]
+    }else {
+      newc = [...camas[0]]
+    }
     res.status(200).json({
-      camas: camas[0]
+      camas: newc
     });
   }
   catch (err) {
