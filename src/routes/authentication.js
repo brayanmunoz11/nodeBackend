@@ -13,20 +13,20 @@ let upload = multer();
 let UserServices = require('./../services/users')
 const userService = new UserServices();
 
-router.post('/signup', upload.fields([]), async (req, res, next) => {
-  // console.log(req.body);
-  try {
-    const { user, message } = await userService.createUser(req.body)
-    // const { userP } = await userService.createPreferences(user)
-    res.status(200).json({
-      user,
-      message
-    });
-  }
-  catch (err) {
-    next(err);
-  }
-});
+// router.post('/signup', upload.fields([]), async (req, res, next) => {
+//   // console.log(req.body);
+//   try {
+//     const { user, message } = await userService.createUser(req.body)
+//     // const { userP } = await userService.createPreferences(user)
+//     res.status(200).json({
+//       user,
+//       message
+//     });
+//   }
+//   catch (err) {
+//     next(err);
+//   }
+// });
 
 //SIGNIN
 router.post('/signin', async (req, res, next) => {
